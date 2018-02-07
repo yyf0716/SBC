@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+<!--
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License. See accompanying LICENSE file.
+-->
+
+<!-- Put site-specific property overrides in this file. -->
+
+<configuration>
+
+<!-- 起一个名字aaaaa,后续录都要修改 -->
+		<property>
+		  <name>dfs.nameservices</name>
+		  <value>aaaaa</value>
+		</property>
+		
+		<!-- NameNode的名字，随便起 -->
+		<property>
+		  <name>dfs.ha.namenodes.aaaaa</name>
+		  <value>nn1,nn2</value>
+		</property>
+		
+		<!-- NameNode的PRC -->
+		<property>
+		  <name>dfs.namenode.rpc-address.aaaaa.nn1</name>
+		  <value>master100:8020</value>
+		</property>
+		<property>
+		  <name>dfs.namenode.rpc-address.aaaaa.nn2</name>
+		  <value>slave101:8020</value>
+		</property>
+		
+		<!-- NameNode的HTTP -->
+		<property>
+		  <name>dfs.namenode.http-address.aaaaa.nn1</name>
+		  <value>master100:50070</value>
+		</property>
+		<property>
+		  <name>dfs.namenode.http-address.aaaaa.nn2</name>
+		  <value>slave101:50070</value>
+		</property>
+		
+		<!-- JN的指定 -->
+		<property>
+		  <name>dfs.namenode.shared.edits.dir</name>
+		  <value>qjournal://slave101:8485;slave102:8485;slave103:8485/aaaaa</value>
+		</property>
+		
+		<!-- 固定写法 -->
+		<property>
+		  <name>dfs.client.failover.proxy.provider.aaaaa</name>
+		  <value>org.apache.hadoop.hdfs.server.namenode.ha.ConfiguredFailoverProxyProvider</value>
+		</property>
+		
+		<!-- 免密码登录 -->
+		<property>
+		  <name>dfs.ha.fencing.methods</name>
+		  <value>sshfence</value>
+		</property>
+		<property>
+		  <name>dfs.ha.fencing.ssh.private-key-files</name>
+		  <value>/root/.ssh/id_rsa</value>
+		</property>
+		
+		<!-- 自动。。。。。 -->
+		<property>
+		   <name>dfs.ha.automatic-failover.enabled</name>
+		   <value>true</value>
+		 </property>
+
+</configuration>
