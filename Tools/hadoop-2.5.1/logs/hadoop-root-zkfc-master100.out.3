@@ -1,0 +1,9 @@
+Exception in thread "main" java.lang.RuntimeException: ZK Failover Controller failed: Failed to reEstablish connection with ZooKeeper
+	at org.apache.hadoop.ha.ZKFailoverController.mainLoop(ZKFailoverController.java:367)
+	at org.apache.hadoop.ha.ZKFailoverController.doRun(ZKFailoverController.java:236)
+	at org.apache.hadoop.ha.ZKFailoverController.access$000(ZKFailoverController.java:61)
+	at org.apache.hadoop.ha.ZKFailoverController$1.run(ZKFailoverController.java:170)
+	at org.apache.hadoop.ha.ZKFailoverController$1.run(ZKFailoverController.java:166)
+	at org.apache.hadoop.security.SecurityUtil.doAsLoginUserOrFatal(SecurityUtil.java:411)
+	at org.apache.hadoop.ha.ZKFailoverController.run(ZKFailoverController.java:166)
+	at org.apache.hadoop.hdfs.tools.DFSZKFailoverController.main(DFSZKFailoverController.java:175)

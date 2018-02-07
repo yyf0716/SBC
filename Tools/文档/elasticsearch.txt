@@ -1,0 +1,41 @@
+------------------
+修改config/elasticsearch.yml    (注意要顶格写，冒号后面要加一个空格)
+a)Cluster.name: chenkl   (同一集群要一样)
+b)Node.name： node-1  (同一集群要不一样)
+c)Network.Host: 192.168.57.4   这里不能写127.0.0.1
+d)防止脑裂的配置
+	discovery.zen.ping.multicast.enabled: false
+	discovery.zen.ping_timeout: 120s
+	client.transport.ping_timeout: 60s
+	discovery.zen.ping.unicast.hosts: ["192.168.57.4","192.168.57.5", "192.168.57.6"]
+------------------	
+不能使用ROOT用户启动
+adduser bigdata
+passwd bigdata 
+
+赋予root权限
+修改 /etc/sudoers 文件
+bigdata   ALL=(ALL)     ALL
+------------------
+修改目录权限
+chown -R bigdata:bigdata ../
+
+bin/elasticsearch -d
+
+
+http://192.168.1.100:9200/_cluster/health?petty
+
+------------------安装kinana
+解压安装kibana
+再congfig目录下的kibana.yml中修改elasticsearch.url http://192.168.1.100:9200
+
+
+------------------安装Marvel 
+Install Marvel into Elasticsearch
+	bin/plugin install license
+	bin/plugin install marvel-agent
+
+Install Marvel into Kibana
+	bin/kibana plugin --install elasticsearch/marvel/latest
+	
+http://192.168.1.100:5601

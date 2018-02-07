@@ -1,0 +1,266 @@
+﻿			NN	DN	ZK	ZKFC	JN	RM	DM
+master100	1		1	1			1		
+slave101	1	1	1	1		1	1	1
+slave102		1	1			1		1
+slave103		1				1		1
+
+---------------------2.5安装---------------------------
+
+/hadoop/etc/hadoop
+	修改hadoop-env.sh中的JAVA_HOME
+	
+	修改hdfs-site.xml
+	
+		<!-- 起一个名字aaaaa,后续录都要修改 -->
+		<property>
+		  <name>dfs.nameservices</name>
+		  <value>aaaaa</value>
+		</property>
+		
+		<!-- NameNode的名字，随便起 -->
+		<property>
+		  <name>dfs.ha.namenodes.aaaaa</name>
+		  <value>nn1,nn2</value>
+		</property>
+		
+		<!-- NameNode的PRC -->
+		<property>
+		  <name>dfs.namenode.rpc-address.aaaaa.nn1</name>
+		  <value>master100:8020</value>
+		</property>
+		<property>
+		  <name>dfs.namenode.rpc-address.aaaaa.nn2</name>
+		  <value>slave101:8020</value>
+		</property>
+		
+		<!-- NameNode的HTTP -->
+		<property>
+		  <name>dfs.namenode.http-address.aaaaa.nn1</name>
+		  <value>master100:50070</value>
+		</property>
+		<property>
+		  <name>dfs.namenode.http-address.aaaaa.nn2</name>
+		  <value>slave101:50070</value>
+		</property>
+		
+		<!-- JN的指定 -->
+		<property>
+		  <name>dfs.namenode.shared.edits.dir</name>
+		  <value>qjournal://slave101:8485;slave102:8485;slave103:8485/aaaaa</value>
+		</property>
+		
+		<!-- 固定写法 -->
+		<property>
+		  <name>dfs.client.failover.proxy.provider.aaaaa</name>
+		  <value>org.apache.hadoop.hdfs.server.namenode.ha.ConfiguredFailoverProxyProvider</value>
+		</property>
+		
+		<!-- 免密码登录 -->
+		<property>
+		  <name>dfs.ha.fencing.methods</name>
+		  <value>sshfence</value>
+		</property>
+		<property>
+		  <name>dfs.ha.fencing.ssh.private-key-files</name>
+		  <value>/root/.ssh/id_rsa</value>
+		</property>
+		
+		<!-- 启用自动故障迁移 -->
+		<property>
+		   <name>dfs.ha.automatic-failover.enabled</name>
+		   <value>true</value>
+		 </property>
+		
+	修改core-site.xml
+	
+		<!-- NameNode入口, 要指定集群，不能指定哪一个IP，因不能知道哪个NameNode是好用的 -->
+		<property>
+		  <name>fs.defaultFS</name>
+		  <value>hdfs://aaaaa</value>
+		</property>
+		
+		<!-- 配置zookeeper,只能是奇数台 -->
+		<property>
+		   <name>ha.zookeeper.quorum</name>
+		   <value>master100:2181,slave101:2181,slave102:2181</value>
+		 </property>
+	
+		<!-- JN的保存目录 -->
+		<property>
+		  <name>dfs.journalnode.edits.dir</name>
+		  <value>/opt/jn/data</value>
+		</property>
+		
+		<property>
+		  <name>hadoop.tmp.dir</name>
+		  <value>/opt/hadoop2</value>
+		</property>
+		
+		
+	在配置文件目录下，编辑文件slaves,内容如下：
+		slave101
+		slave102
+		slave103
+		
+		
+	将配置好的hadoop打包，CP到其它计算上
+	教程上是将原包解压，把配置文件COPY过去
+	
+	进sbin目录下
+	启动JN，3台
+	./hadoop-daemon.sh start journalnode
+	
+	在一台NameNode上进行格式化bin
+	./hdfs namenode -format
+	启动sbin
+	./hadoop-daemon.sh start namenode
+	jps
+	回上一目录看看LOGo
+	
+	在没有格式化的NameNode上执行以下：
+	./hdsf namenode -bootstrapStandby
+	查看/opt/hadoop2下是否有文件生成
+	
+	在其它一个NameNodeh上执行  bin目录
+	./hdfs zkfc -formatZK    先启用ZK然后格式化
+	
+	除了Zookeeper，其它服务停了
+	sbin目录下
+	./stop-dfs.sh
+	然后再启动
+	./start-dfs.sh
+	
+	
+export HADOOP_HOME=/usr/hadoop-2.5.1
+export PATH=$HADOOP_HOME/bin:$PATH
+
+eclipse 权限问题：
+变量里面添加HADOOP_USER_NAME=root
+将当前系统的帐号修改为root
+
+--------------------------MR----------------------------	
+修改mapred-site.xml
+	<configuration> 
+		<!-- 不要修改内容 -->
+		<property> 
+		  <name>mapreduce.framework.name</name> 
+		  <value>yarn</value> 
+		</property> 
+	</configuration>
+	
+	
+修改yarm-site.xml
+	<configuration> 
+		<!-- 不知道 -->
+		<property> 
+			<name>yarn.resourcemanager.hostname</name> 
+			<value>hadoop100</value> 
+		</property>   
+		
+		<!-- 不要修改内容 -->
+		<property> 
+			<name>yarn.nodemanager.aux-services</name> 
+			<value>mapreduce_shuffle</value> 
+		</property> 
+	  
+		<!-- 开启RM高可靠 -->
+        <property>
+			<name>yarn.resourcemanager.ha.enabled</name>
+			<value>true</value>
+        </property>
+        <!-- 指定RM的cluster id -->
+        <property>
+			<name>yarn.resourcemanager.cluster-id</name>
+			<value>aaaaaYarn</value>
+        </property>
+        <!-- 指定RM的名字 -->
+        <property>
+			<name>yarn.resourcemanager.ha.rm-ids</name>
+			<value>rm1,rm2</value>
+        </property>
+        <!-- 分别指定RM的地址 -->
+        <property>
+			<name>yarn.resourcemanager.hostname.rm1</name>
+			<value>master100</value>
+        </property>
+        <property>
+			<name>yarn.resourcemanager.hostname.rm2</name>
+			<value>slave101</value>
+        </property>
+		<!-- 不知道 -->
+		<property>
+			<name>yarn.resourcemanager.recovery.enabled</name>
+			<value>true</value>
+		</property>
+		<!-- 不知道 -->
+		<property>
+			<name>yarn.resourcemanager.store.class</name>
+			<value>org.apache.hadoop.yarn.server.resourcemanager.recovery.ZKRMStateStore</value>
+		</property>
+        <!-- 指定zk集群地址 -->
+        <property>
+			<name>yarn.resourcemanager.zk-address</name>
+			<value>master100:2181,slave101:2181,slave102:2181</value>
+        </property>
+		
+		<property>
+		  <name>yarn.application.classpath</name>
+		      <value>
+		           /usr/hadoop-2.5.1/etc/*,
+		           /usr/hadoop-2.5.1/etc/hadoop/*,
+		           /usr/hadoop-2.5.1/lib/*,
+		           /usr/hadoop-2.5.1/share/hadoop/common/*,
+		           /usr/hadoop-2.5.1/share/hadoop/common/lib/*,
+		           /usr/hadoop-2.5.1/share/hadoop/mapreduce/*,
+		           /usr/hadoop-2.5.1/share/hadoop/mapreduce/lib/*,
+		           /usr/hadoop-2.5.1/share/hadoop/hdfs/*,
+		           /usr/hadoop-2.5.1/share/hadoop/hdfs/lib/*,
+		           /usr/hadoop-2.5.1/share/hadoop/yarn/*,
+		           /usr/hadoop-2.5.1/share/hadoop/yarn/lib/*
+		      </value>
+		</property>
+
+	</configuration>
+
+需要手动启RM
+yarn-daemon.sh start resourcemanager	
+
+yarn界面
+master100:8088  
+-------------------------ECLIPSE -----------------------------	
+eclipse 权限问题：
+变量里面添加HADOOP_USER_NAME=root
+将当前系统的帐号修改为root
+
+1.环境变量  2个，  bin,sbin
+2.bin下加winutils.exe
+3.复制hadoop原码到工程中
+4.JDK要改1.7
+5.NativeIO 470行返回true
+6.本地运行不要有配置文件
+
+-------------------------ECLIPSE 服务器环境运行-----------------------------	
+YARNRunner 需要本地修改一下
+
+ExitCodeException exitCode=1: 
+需要配置yarn.application.classpath
+
+Exceeded MAX_FAILED_UNIQUE_FETCHES; bailing-out 	
+异常分析，由于datanode没有修改hosts文件导致的，修改以后将新加机器添加到hosts，恢复正常
+------------------------------------------------------	
+	
+	
+	http://mater100:50070
+	
+	./hdfs dfs -mkdir -p /usr/file
+	./hdfs dfs -put aaa.txt /usr/file  
+	
+		
+		
+		
+		
+		
+		
+		
+		
+		

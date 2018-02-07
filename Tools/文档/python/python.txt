@@ -1,0 +1,89 @@
+yum install gcc
+rpm -qa | grep gcc
+
+tar -zxvf *.tgz
+
+需要openssl zlib
+
+./configure --help
+./configure --prefix /usr/python-3.6.4 --enable-optimizations
+make
+make install
+
+whereis cp 查看CP在哪
+
+vi ~/.bash_profile
+vi ~/.bashrc
+
+pip3 install ipython
+
+----------------------------------------
+import keywork
+keywork.kwlist;
+
+myName='yyf'
+age=35
+print('my name is %s age is %s'%(myName,age))
+
+
+%04d  整数前补0
+%.2f  小数点后2位
+%d%%   10%  %%是一个%
+
+a=raw_input('请输入姓名')
+a=input('请输入姓名')
+
+if a == '' and a >= '' :
+	pass
+	
+i=0	
+while i <100 :
+	i+=1
+	
+print("*",end="");
+
+for i in 'abcde':
+	print(i)
+else:
+	print(1)
+	
+for i in range(1,10):
+	print(i)
+	
+name='abcdefg'	
+name[2:1]
+name[-1:0:-1]
+name.find('4')     找不到报-1
+name.index('3')    找不到报错
+name.rindex('3')    r表示从右侧开始
+name.replace('5','-5')	替换
+name.replace('-5','5',1)	替换1次
+name.split(" ")			字符串分割
+name.split(" ", 2)
+name.partition(" ", 2)  字符串分割（分割符也算）
+name.capitalize()  首字母大写
+name.title() 每个单词首字母大写
+
+filename.startwith(".txt")   是不是以什么开头的
+filename.endswith(".txt")   是不是以什么结尾的
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

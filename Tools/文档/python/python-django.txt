@@ -1,0 +1,23 @@
+﻿环境变量：C:\python3;C:\python3\Lib\site-packages\django\bin;
+
+pip uninstall django，
+pip install django
+
+python manage.py migrate
+python manage.py runserver
+
+python manage.py createsuperuser
+
+import hashlib
+
+md5 = hashlib.md5()
+md5.update('')
+md5.hexdigest()
+
+创建模块
+python manage.py startapp study
+
+产生SQL
+python manage.py makemigrations
+查看SQL 
+python manage.py sqlmigrate study 0001
