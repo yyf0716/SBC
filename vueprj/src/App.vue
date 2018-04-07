@@ -7,9 +7,16 @@
 </template>
 
 <script>
+
+import Vue from 'vue'
 import HelloWorld from './components/HelloWorld'
 import Login from './components/Login'
 import Study from './components/Study'
+
+
+
+
+
 
 export default {
   name: 'App',
